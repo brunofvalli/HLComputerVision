@@ -19,6 +19,8 @@ public class ResultsLabel : MonoBehaviour
     {
         // allows this instance to behave like a singleton
         instance = this;
+
+        ConsoleOut.SendText("Awake Result Label");
     }
 
     /// <summary>

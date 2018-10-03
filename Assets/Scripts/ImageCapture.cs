@@ -16,10 +16,14 @@ public class ImageCapture : MonoBehaviour {
     {
         // Allows this instance to behave like a singleton
         instance = this;
+
+        ConsoleOut.SendText("Awake Image Capture");
     }
 
     void Start()
     {
+        ConsoleOut.SendText("Star ImageCapture");
+
         // subscribing to the Hololens API gesture recognizer to track user gestures
         recognizer = new GestureRecognizer();
         recognizer.SetRecognizableGestures(GestureSettings.Tap);
@@ -32,6 +36,7 @@ public class ImageCapture : MonoBehaviour {
     /// </summary>
     private void TapHandler(TappedEventArgs obj)
     {
+        ConsoleOut.SendText("TapHandler");
         // Only allow capturing, if not currently processing a request.
         if (currentlyCapturing == false)
         {
@@ -54,12 +59,14 @@ public class ImageCapture : MonoBehaviour {
     /// </summary>
     void OnCapturedPhotoToDisk(PhotoCapture.PhotoCaptureResult result)
     {
+        ConsoleOut.SendText("OnCapturedPhotoToDisk");
         // Call StopPhotoMode once the image has successfully captured
         photoCaptureObject.StopPhotoModeAsync(OnStoppedPhotoMode);
     }
 
     void OnStoppedPhotoMode(PhotoCapture.PhotoCaptureResult result)
     {
+        ConsoleOut.SendText("OnStoppedPhoteMode");
         // Dispose from the object in memory and request the image analysis 
         // to the VisionManager class
         photoCaptureObject.Dispose();
@@ -73,14 +80,20 @@ public class ImageCapture : MonoBehaviour {
     /// </summary>    
     private void ExecuteImageCaptureAndAnalysis()
     {
+        ConsoleOut.SendText("ExecuteImageCaptureAndAnalysis");
+
+        ConsoleOut.SendText("Resolutions " + PhotoCapture.SupportedResolutions.Count());
+
         // Set the camera resolution to be the highest possible    
         Resolution cameraResolution = PhotoCapture.SupportedResolutions.OrderByDescending((res) => res.width * res.height).First();
 
         Texture2D targetTexture = new Texture2D(cameraResolution.width, cameraResolution.height);
 
+        ConsoleOut.SendText("before CreateAsync");
         // Begin capture process, set the image format    
         PhotoCapture.CreateAsync(false, delegate (PhotoCapture captureObject)
         {
+            ConsoleOut.SendText("after CreateAsync");
             photoCaptureObject = captureObject;
             CameraParameters camParameters = new CameraParameters();
             camParameters.hologramOpacity = 0.0f;
@@ -91,6 +104,7 @@ public class ImageCapture : MonoBehaviour {
             // Capture the image from the camera and save it in the App internal folder    
             captureObject.StartPhotoModeAsync(camParameters, delegate (PhotoCapture.PhotoCaptureResult result)
             {
+                ConsoleOut.SendText("end StartPhotoModeAsync");
                 string filename = string.Format(@"CapturedImage{0}.jpg", tapsCount);
 
                 string filePath = Path.Combine(Application.persistentDataPath, filename);

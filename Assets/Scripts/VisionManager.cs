@@ -44,6 +44,7 @@ public class VisionManager : MonoBehaviour
     #region events
     private void Awake()
     {
+        ConsoleOut.SendText("VisionManager Awake");
         // allows this instance to behave like a singleton
         instance = this;
     }
@@ -67,9 +68,13 @@ public class VisionManager : MonoBehaviour
     /// </summary>
     public IEnumerator AnalyseLastImageCaptured()
     {
+        ConsoleOut.SendText("AnalyseLastImageCaptured");
         WWWForm webForm = new WWWForm();
+
+        ConsoleOut.SendText("Going to conect to : " + visionAnalysisEndpoint);
         using (UnityWebRequest unityWebRequest = UnityWebRequest.Post(visionAnalysisEndpoint, webForm))
         {
+            ConsoleOut.SendText("Connected to : " + visionAnalysisEndpoint);
             // gets a byte array out of the saved image
             imageBytes = GetImageAsByteArray(imagePath);
             unityWebRequest.SetRequestHeader("Content-Type", "application/octet-stream");
@@ -98,10 +103,12 @@ public class VisionManager : MonoBehaviour
 
                 if (analysedObject.tags == null)
                 {
+                    ConsoleOut.SendText("analysedObject.tagData is null");
                     Debug.Log("analysedObject.tagData is null");
                 }
                 else
                 {
+                    ConsoleOut.SendText("analysedObject.tagData is not null getting data.");
                     Dictionary<string, float> tagsDictionary = new Dictionary<string, float>();
 
                     foreach (TagData td in analysedObject.tags)
